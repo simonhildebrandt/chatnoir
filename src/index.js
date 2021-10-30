@@ -3,6 +3,17 @@ import "@babel/polyfill";
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const App = () => "Rendered!";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react"
+import { navigate, useRouter } from './router';
 
-ReactDOM.render(<App/>, document.getElementById('app'));
+import App from './app';
+
+const config = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+};
+
+const theme = extendTheme({ config });
+
+
+ReactDOM.render(<ChakraProvider theme={theme}><App/></ChakraProvider>, document.getElementById('app'));
