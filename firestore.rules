@@ -1,8 +1,41 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+    function inviteForCreatedChat() {
+      let chat = get(/databases/$(database)/documents/chats/$(resource.data.chatId));
+      return chat.data.creator == request.auth.uid;
+    }
+
+    function invitedUser(inviteId) {
+      return inviteId == request.auth.uid;
+    }
+
+    function chatById(id) {
+      return get(/databases/$(database)/documents/chats/$(id));
+    }
+
+    function creatorOrInvited(chatId) {
+      let chat = chatById(chatId);
+      let creator = request.auth.uid == chat.data.creator;
+      let invited = get(/databases/$(database)/documents/invites/$(request.auth.uid)).data.chatId == chatId;
+
+      return creator || invited;
+    }
+
+    match /chats/{chatId} {
+      allow list, get: if request.auth != null && creatorOrInvited(chatId);
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.creator;
+
+      match /messages/{messageId} {
+        allow list, get, create: if request.auth != null && creatorOrInvited(chatId);
+      }
+    }
+
+    match /invites/{inviteId} {
+      allow list, get: if request.auth != null && (inviteForCreatedChat() || invitedUser(inviteId));
+      allow create: if request.auth != null;
     }
   }
 }
+
+//  allow list, get: if request.auth != null && request.auth.uid == resource.data.creator;

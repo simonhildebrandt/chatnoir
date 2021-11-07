@@ -6,10 +6,10 @@
   "author": "Simon Hildebrandt <simonhildebrandt@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "serve": "live-server --port=9000 dev/",
-    "build": "browserify src/index.js -o dev/index.js -t [ babelify ]",
-    "watch": "watchify src/index.js -o dev/index.js -t [ babelify ]",
-    "build_prod": "browserify src/index.js -o public/index.js -t [ babelify ]",
+    "serve": "live-server --port=9000 --entry-file=index.html dev/",
+    "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js",
+    "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch",
+    "build_prod": "yarn esbuild src/index.js --bundle --outfile=dev/index.js",
     "deploy_functions": "firebase deploy --only functions",
     "deploy_hosting": "yarn build_prod && yarn firebase deploy --only hosting",
     "deploy_all": "yarn deploy_functions && yarn deploy_hosting",
@@ -32,6 +32,7 @@
     "axios": "^0.24.0",
     "babelify": "^10.0.0",
     "browserify": "^16.5.1",
+    "esbuild": "^0.13.12",
     "firebase": "^9.2.0",
     "firebase-tools": "^9.21.0",
     "framer-motion": "^4",
@@ -39,8 +40,9 @@
     "navigo": "^8.11.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-markdown": "^7.1.0",
     "react-textarea-autosize": "^8.3.3",
-    "remarkable": "^2.0.1",
+    "throttle-debounce": "^3.0.1",
     "watchify": "^3.11.1"
   }
 }
