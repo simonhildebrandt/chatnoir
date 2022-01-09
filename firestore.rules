@@ -10,24 +10,29 @@ service cloud.firestore {
       return inviteId == request.auth.uid;
     }
 
-    function chatById(id) {
-      return get(/databases/$(database)/documents/chats/$(id));
+    // function chatById(id) {
+    //   return get(/databases/$(database)/documents/chats/$(id));
+    // }
+
+    function creatorOrInvited(uid, chat, chatId) {
+      let isCreator = (uid == chat.data.creator);
+      let invite = get(/databases/$(database)/documents/invites/$(uid));
+      let invited = exists(/databases/$(database)/documents/invites/$(uid)) && (invite.data.chatId == chatId);
+      // return isCreator;
+      return isCreator || invited;
     }
 
-    function creatorOrInvited(chatId) {
-      let chat = chatById(chatId);
-      let creator = request.auth.uid == chat.data.creator;
-      let invited = get(/databases/$(database)/documents/invites/$(request.auth.uid)).data.chatId == chatId;
-
-      return creator || invited;
+    function creatorOrInvitedByChatId(uid, chatId) {
+      let chat = get(/databases/$(database)/documents/chats/$(chatId));
+      return creatorOrInvited(uid, chat, chatId)
     }
 
     match /chats/{chatId} {
-      allow list, get: if request.auth != null && creatorOrInvited(chatId);
+      allow list, get: if request.auth != null && creatorOrInvited(request.auth.uid, resource, chatId);
       allow create: if request.auth != null && request.auth.uid == request.resource.data.creator;
 
       match /messages/{messageId} {
-        allow list, get, create: if request.auth != null && creatorOrInvited(chatId);
+        allow list, get, create: if request.auth != null && creatorOrInvitedByChatId(request.auth.uid, chatId);
       }
     }
 

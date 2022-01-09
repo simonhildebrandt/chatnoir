@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Flex, Button } from '@chakra-ui/react';
+import { Flex, Button, Link, Input } from '@chakra-ui/react';
 
 import { useFirestoreCollection, createDocument } from './firebase';
 
 import { navigate } from './router';
 
 
-function Options({chatId}) {
+function Options({chatId, updateName}) {
   const { data: invites, loaded } = useFirestoreCollection('invites', ['chatId', '==', chatId]);
 
   function addParticipant() {
@@ -18,14 +18,27 @@ function Options({chatId}) {
   }
 
   function inviteLink(id) {
-    navigate(`/invite/${id}`)
+    return `/invite/${id}`
+  }
+
+  function updateCreatorName(event) {
+    const {target: {value}} = event;
+
+
+  }
+
+  function updateGuestName(event) {
+    const {target: {value}} = event;
+
+
   }
 
   return <Flex>
     { Object.entries(invites).map(([id, invite]) => (
-      <Flex key={id} onClick={() => inviteLink(id)}>{JSON.stringify(invite)}</Flex>
+      <Link key={id} href={inviteLink(id)}>{JSON.stringify(invite)}</Link>
     )) }
-    <Button onClick={addParticipant}>Add</Button>
+    <Input onChange={updateCreatorName} placeholder="creator name"/>
+    <Input onChange={updateGuestName} placeholder="guest name"/>
   </Flex>
 }
 

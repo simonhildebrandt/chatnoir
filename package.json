@@ -9,7 +9,7 @@
     "serve": "live-server --port=9000 --entry-file=index.html dev/",
     "build": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js",
     "watch": "yarn esbuild src/index.jsx --bundle --outfile=dev/index.js --watch",
-    "build_prod": "yarn esbuild src/index.js --bundle --outfile=dev/index.js",
+    "build_prod": "yarn esbuild src/index.jsx --bundle --outfile=public/index.js",
     "deploy_functions": "firebase deploy --only functions",
     "deploy_hosting": "yarn build_prod && yarn firebase deploy --only hosting",
     "deploy_all": "yarn deploy_functions && yarn deploy_hosting",

@@ -15,7 +15,9 @@ function Chats({user, currentChat}) {
     createDocument(
       "chats", {
         creator: user.uid,
-        name: `chat ${new Date().valueOf()}`
+        name: `chat ${new Date().valueOf()}`,
+        creatorName: 'Person 1',
+        guestName: 'Person 2'
       }
     )
   }

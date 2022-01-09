@@ -45,9 +45,13 @@ const auth = getAuth();
 const db = getFirestore();
 
 
-connectAuthEmulator(auth, "http://localhost:9099");
-connectFirestoreEmulator(db, 'localhost', 8090);
+export const host = process.env.SITE_URL || "http://localhost:9000";
 
+
+if (!process.env.SITE_URL) {
+  connectAuthEmulator(auth, "http://localhost:9099");
+  connectFirestoreEmulator(db, 'localhost', 8090);
+}
 
 
 function sendSignInLink(email) {
